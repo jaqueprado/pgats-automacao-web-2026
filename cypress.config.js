@@ -1,21 +1,34 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-  reporter: 'cypress-mochawesome-reporter',
+  retries: {
+    openMode: 0,
+    runMode: 2
+  },
+  chromeWebSecurity: false,
   e2e: {
-    // Disables Cross-Origin iframe security restrictions
-    chromeWebSecurity: false, 
-    
-    // Blocks the third-party ads on automationexercise.com
-    blockHosts: [             
-      "*.doubleclick.net",
-      "*.googlesyndication.com",
-      "*.adservice.google.com",
-      "*amazon-adsystem.com"
-    ],
+    baseUrl: 'https://automationexercise.com',
+    reporter: 'cypress-mochawesome-reporter',
+    reporterOptions: {
+      charts: true,
+      reportPageTitle: 'Automation Exercise - Test Report',
+      embeddedScreenshots: true,
+      inlineAssets: true,
+      saveAllAttempts: false,
+      reportFilename: "AutomationExercise-[datetime]-report",
+      overwrite: false,
+      html: true,
+      json: true,
+    },
     setupNodeEvents(on, config) {
       require('cypress-mochawesome-reporter/plugin')(on);
-      return config;
+      
+      // Evento para screenshots em caso de falha
+      on('task', {
+        failed: require('cypress-mochawesome-reporter/lib').failed,
+      });
     },
+    screenshotOnRunFailure: true,
+    video: true
   },
 });

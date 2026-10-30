@@ -10,7 +10,7 @@ describe('Automation Exercise', () => {
     cy.get('a[href*=login]').click()
 
     cy.get('[data-qa="signup-name"]').type('PGATS Aut')
-    cy.get('[data-qa="signup-email"]').type('pgats-aut-test@mail.com')
+    cy.get('[data-qa="signup-email"]').type('jaque.prado@mail.com')
 
     cy.get('[data-qa="signup-button"]').click()
 
