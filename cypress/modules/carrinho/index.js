@@ -24,6 +24,8 @@ class Carrinho {
     cy.get('[data-qa="expiry-month"]').type('12')
     cy.get('[data-qa="expiry-year"]').type('2027')
     cy.get('[data-qa="pay-button"]').click()
+    cy.url().should('include', '/payment_done/')
+
   }
 }
 
