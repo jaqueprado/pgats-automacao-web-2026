@@ -35,7 +35,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
-          spec: cypress/e2e/trabalho-final.cy.js
+          spec: cypress/e2e/automation-exercise.cy.js
 
       - name: Generate test report
         if: always()
