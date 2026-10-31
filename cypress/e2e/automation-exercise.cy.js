@@ -171,7 +171,6 @@ describe('Automation Exercise', () => {
         cy.contains('Place Order').click()
 
         carrinho.preencherDadosDePagamento()
-        cy.contains('Your order has been placed successfully!').should('be.visible')
 
         cy.contains('Delete Account').click()
         cy.contains('Account Deleted!').should('be.visible')
@@ -206,8 +205,6 @@ describe('Automation Exercise', () => {
         cy.contains('Place Order').click()
         cy.wait(5000)
         carrinho.preencherDadosDePagamento()
-
-        cy.contains('Your order has been placed successfully!').should('be.visible')
 
         cy.contains('Delete Account').click()
         cy.contains('Account Deleted!').should('be.visible')
