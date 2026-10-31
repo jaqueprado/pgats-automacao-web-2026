@@ -8,6 +8,11 @@ import carrinho from '../modules/carrinho'
 describe('Automation Exercise', () => {
     const password = '12345'
 
+    const openHomePage = () => {
+        cy.visit('https://www.automationexercise.com')
+        cy.get('body').should('be.visible')
+    }
+
     const openLoginPage = () => {
         cy.visit('https://www.automationexercise.com')
         menu.navegarParaLogin()
@@ -39,7 +44,7 @@ describe('Automation Exercise', () => {
         menu.efetuarLogout()
         openLoginPage()
         login.preencherFormularioDeLogin(email, password)
-
+        cy.wait(5000)
         cy.contains('Logged in as PGATS Aut').should('be.visible')
 
         cy.contains('Delete Account').click()
@@ -71,112 +76,29 @@ describe('Automation Exercise', () => {
         cy.xpath('//*[@data-qa="continue-button"]').click()
     })
 
-    it('Caso de Teste 15: Realizar pedido: Registrar durante checkout', () => {
-        const email = `jaque.silva${Date.now()}@mail.com`
-
-        cy.visit('https://www.automationexercise.com')
-        cy.get('body').should('be.visible')
-
-        openLoginPage()
-        login.preencherFormularioDePreCadastro('PGATS Aut', email)
-        cadastro.preencherFormularioDeCadastroCompleto()
-        cy.contains('Account Created!').should('be.visible')
-        cy.xpath('//*[@data-qa="continue-button"]').click()
-        cy.contains('Logged in as PGATS Aut').should('be.visible')
-
-        cy.get('a[href="/products"]').click()
-        carrinho.adicionarPrimeiroProdutoAoCarrinho()
-        carrinho.navegarParaCarrinho()
-
-        cy.url().should('include', '/view_cart')
-        cy.get('.cart_info').should('be.visible')
-
-        cy.contains('Proceed To Checkout').click()
-
-        cy.get('#address_delivery').should('be.visible')
-        cy.get('#cart_info').should('be.visible')
-
-        cy.get('textarea[name="message"]').type('Por favor, entregar no período da manhã.')
-        cy.contains('Place Order').click()
-
-        carrinho.preencherDadosDePagamento()
-
-        cy.contains('Your order has been placed successfully!').should('be.visible')
-
-        cy.contains('Delete Account').click()
-        cy.contains('Account Deleted!').should('be.visible')
-        cy.xpath('//*[@data-qa="continue-button"]').click()
-    })
-
-    it('Caso de Teste 16: Realizar pedido: Login antes do checkout', () => {
+    it('Caso de Teste 05: Cadastrar um usuário com um endereço de email que já existe', () => {
         const email = `jaque.silva${Date.now()}@mail.com`
 
         registerUser(email)
         menu.efetuarLogout()
+        openLoginPage()
+        login.preencherFormularioDePreCadastro('PGATS Aut', email)
 
-        cy.visit('https://www.automationexercise.com')
-        cy.get('body').should('be.visible')
+        cy.contains('Email Address already exist!').should('be.visible')
 
         openLoginPage()
         login.preencherFormularioDeLogin(email, password)
-        cy.contains('Logged in as PGATS Aut').should('be.visible')
-
-        cy.get('a[href="/products"]').click()
-        carrinho.adicionarPrimeiroProdutoAoCarrinho()
-        carrinho.navegarParaCarrinho()
-
-        cy.url().should('include', '/view_cart')
-        cy.get('.cart_info').should('be.visible')
-
-        cy.contains('Proceed To Checkout').click()
-
-        cy.get('#address_delivery').should('be.visible')
-        cy.get('#cart_info').should('be.visible')
-
-        cy.get('textarea[name="message"]').type('Por favor, entregar no período da manhã.')
-        cy.contains('Place Order').click()
-
-        carrinho.preencherDadosDePagamento()
-
-        cy.contains('Your order has been placed successfully!').should('be.visible')
-
+        cy.wait(5000)
         cy.contains('Delete Account').click()
         cy.contains('Account Deleted!').should('be.visible')
         cy.xpath('//*[@data-qa="continue-button"]').click()
     })
 
-    it('Caso de Teste 10: Verificar subscrição na página home', () => {
-        cy.visit('https://www.automationexercise.com')
-        cy.get('body').should('be.visible')
-
-        cy.scrollTo('bottom')
-        cy.contains('Subscription').should('be.visible')
-
-        cy.get('#subemail').type(`subscriber${Date.now()}@mail.com`)
-        cy.get('#subscribe').click()
-
-        cy.contains('You have been successfully subscribed!').should('be.visible')
-    })
-
-    it('Caso de Teste 09: Pesquisar produto', () => {
-        cy.visit('https://www.automationexercise.com')
-        cy.get('body').should('be.visible')
-
-        cy.get('a[href="/products"]').click()
-        cy.contains('All Products').should('be.visible')
-
-        cy.get('#search_product').type('dress')
-        cy.get('#submit_search').click()
-
-        cy.contains('Searched Products').should('be.visible')
-        cy.get('.features_items .product-image-wrapper').should('have.length.greaterThan', 0)
-    })
-
     it('Caso de Teste 08: Verificar detalhes do produto', () => {
-        cy.visit('https://www.automationexercise.com')
-        cy.get('body').should('be.visible')
+        openHomePage()
 
         cy.get('a[href="/products"]').click()
+        cy.wait(5000)
         cy.contains('All Products').should('be.visible')
         cy.get('.features_items').should('be.visible')
 
@@ -195,19 +117,98 @@ describe('Automation Exercise', () => {
         })
     })
 
-    it('Caso de Teste 05: Cadastrar um usuário com um endereço de email que já existe', () => {
+    it('Caso de Teste 09: Pesquisar produto', () => {
+        openHomePage()
+
+        cy.get('a[href="/products"]').click()
+        cy.wait(3000)
+        cy.contains('All Products').should('be.visible')
+
+        cy.get('#search_product').type('dress')
+        cy.get('#submit_search').click()
+
+        cy.contains('Searched Products').should('be.visible')
+        cy.get('.features_items .product-image-wrapper').should('have.length.greaterThan', 0)
+    })
+
+    it('Caso de Teste 10: Verificar subscrição na página home', () => {
+        openHomePage()
+
+        cy.scrollTo('bottom')
+        cy.contains('Subscription').should('be.visible')
+
+        cy.get('#susbscribe_email').type(`subscriber${Math.floor(Math.random() * 1000000)}@mail.com`)
+        cy.get('#subscribe').click()
+
+        cy.contains('You have been successfully subscribed!').should('be.visible')
+    })
+
+    it('Caso de Teste 15: Realizar pedido: Registrar durante checkout', () => {
+        const email = `jaque.silva${Math.floor(Math.random() * 1000000)}@mail.com`
+
+        openLoginPage()
+        login.preencherFormularioDePreCadastro('PGATS Aut', email)
+        cadastro.preencherFormularioDeCadastroCompleto()
+        cy.contains('Account Created!').should('be.visible')
+        cy.xpath('//*[@data-qa="continue-button"]').click()
+        cy.wait(5000)
+        cy.contains('Logged in as PGATS Aut').should('be.visible')
+
+        cy.get('a[href="/products"]').click()
+        carrinho.adicionarPrimeiroProdutoAoCarrinho()
+        cy.wait (3000)
+        carrinho.navegarParaCarrinho()
+
+        cy.url().should('include', '/view_cart')
+        cy.get('.cart_info').should('be.visible')
+
+        cy.contains('Proceed To Checkout').click()
+
+        cy.get('#address_delivery').should('be.visible')
+        cy.get('#cart_info').should('be.visible')
+
+        cy.get('textarea[name="message"]').type('Por favor, entregar no período da manhã.')
+        cy.contains('Place Order').click()
+
+        carrinho.preencherDadosDePagamento()
+        cy.contains('Your order has been placed successfully!').should('be.visible')
+
+        cy.contains('Delete Account').click()
+        cy.contains('Account Deleted!').should('be.visible')
+        cy.xpath('//*[@data-qa="continue-button"]').click()
+    })
+
+    it('Caso de Teste 16: Realizar pedido: Login antes do checkout', () => {
         const email = `jaque.silva${Date.now()}@mail.com`
 
         registerUser(email)
         menu.efetuarLogout()
-        openLoginPage()
-        login.preencherFormularioDePreCadastro('PGATS Aut', email)
-
-        cy.contains('Email Address already exist!').should('be.visible')
 
         openLoginPage()
         login.preencherFormularioDeLogin(email, password)
         cy.wait(5000)
+        cy.contains('Logged in as PGATS Aut').should('be.visible')
+
+        cy.get('a[href="/products"]').click()
+        carrinho.adicionarPrimeiroProdutoAoCarrinho()
+        cy.wait (3000)
+        carrinho.navegarParaCarrinho()
+
+        cy.url().should('include', '/view_cart')
+        cy.get('.cart_info').should('be.visible')
+
+        cy.contains('Proceed To Checkout').click()
+
+        cy.get('#address_delivery').should('be.visible')
+        cy.get('#cart_info').should('be.visible')
+
+        cy.get('textarea[name="message"]').type('Por favor, entregar no período da manhã.')
+        cy.contains('Place Order').click()
+        cy.wait(5000)
+        carrinho.preencherDadosDePagamento()
+
+        cy.contains('Your order has been placed successfully!').should('be.visible')
+
         cy.contains('Delete Account').click()
         cy.contains('Account Deleted!').should('be.visible')
         cy.xpath('//*[@data-qa="continue-button"]').click()

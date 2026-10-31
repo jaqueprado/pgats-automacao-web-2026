@@ -1,8 +1,16 @@
 class Carrinho {
   adicionarPrimeiroProdutoAoCarrinho() {
-    cy.get('.features_items .product-image-wrapper').first().trigger('mouseover')
-    cy.get('.features_items .product-image-wrapper').first().find('.add-to-cart').first().click()
-    cy.get('.modal-footer button').click()
+    cy.get('a[href*="products"]').first().click()
+    cy.contains('All Products').should('be.visible')
+    cy.get('.features_items .product-image-wrapper').should('be.visible')
+
+    ;[1, 2].forEach((productId) => {
+        cy.get(`a.add-to-cart[data-product-id="${productId}"]`)
+            .first()
+            .click({ force: true })
+        cy.contains('Added!').should('be.visible')
+        cy.contains('Continue Shopping').click()
+    })
   }
 
   navegarParaCarrinho() {
